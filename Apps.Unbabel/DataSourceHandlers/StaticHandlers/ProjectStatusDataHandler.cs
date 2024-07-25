@@ -1,6 +1,6 @@
 using Blackbird.Applications.Sdk.Common.Dictionaries;
 
-namespace Apps.Unbabel.DataSourceHandlers.EnumDataHandlers;
+namespace Apps.Unbabel.DataSourceHandlers.StaticHandlers;
 
 public class ProjectStatusDataHandler : IStaticDataSourceHandler
 {

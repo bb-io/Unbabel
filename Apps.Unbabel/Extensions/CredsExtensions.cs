@@ -25,6 +25,7 @@ public static class CredsExtensions
                 ApiType.Translations => "translation-api-os",
                 ApiType.Projects => "project-api",
                 ApiType.Pipelines => "project-api",
+                ApiType.Qi => "qualityintelligence-api",
                 _ => throw new ArgumentOutOfRangeException(nameof(apiType), apiType, null)
             },
         };

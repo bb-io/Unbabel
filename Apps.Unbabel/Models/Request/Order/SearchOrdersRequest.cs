@@ -1,5 +1,5 @@
 using Apps.Unbabel.DataSourceHandlers;
-using Apps.Unbabel.DataSourceHandlers.EnumDataHandlers;
+using Apps.Unbabel.DataSourceHandlers.StaticHandlers;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Dictionaries;
 using Blackbird.Applications.Sdk.Common.Dynamic;

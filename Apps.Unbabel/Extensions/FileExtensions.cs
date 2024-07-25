@@ -1,5 +1,6 @@
 using System.Text;
 using System.Xml.Linq;
+using Apps.Unbabel.Models.Request.QualityIntelligence;
 
 namespace Apps.Unbabel.Extensions;
 
@@ -22,9 +23,9 @@ public static class FileExtensions
         return content.ReadAsMultipartAsync(provider);
     }
 
-    public static object GetSegments(this Stream file)
+    public static IEnumerable<TranslatedSegment> GetSegments(this Stream file)
     {
-        var result = new List<object>();
+        var result = new List<TranslatedSegment>();
         using var reader = new StreamReader(file, Encoding.UTF8);
         var xliffDocument = XDocument.Load(reader);
 
@@ -32,10 +33,10 @@ public static class FileExtensions
 
         foreach (var transUnit in xliffDocument.Descendants(defaultNs + "trans-unit"))
         {
-            result.Add(new
+            result.Add(new TranslatedSegment()
             {
-                Source = transUnit.Element(defaultNs + "source").Value,
-                Target = transUnit.Element(defaultNs + "target").Value
+                SourceSegment = transUnit.Element(defaultNs + "source").Value,
+                TargetSegment = transUnit.Element(defaultNs + "target").Value
             });
         }
 
