@@ -24,6 +24,24 @@ public class QualityIntelligenceActions : UnbabelInvocable
         _fileManagementClient = fileManagementClient;
     }
 
+    [Action("Evaluate segment",
+        Description =
+            "Get a report with quality evaluations at the word, sentence, and document level of the segment")]
+    public async Task<EvaluationResponse> EvaluateSegment(
+        [ActionParameter] SegmentEvaluationInput input)
+    {
+        var request = new RestRequest($"/v1/customers/{CustomerId}/evaluations", Method.Post)
+            .WithJsonBody(new EvaluateTranslationRequest(input, [
+                new()
+                {
+                    SourceSegment = input.SourceSegment,
+                    TargetSegment = input.TargetSegment
+                }
+            ]), JsonConfig.Settings);
+
+        return await QiClient.ExecuteWithErrorHandling<EvaluationResponse>(request, Creds);
+    }
+
     [Action("Evaluate XLIFF",
         Description =
             "Get a report with quality evaluations at the word, sentence, and document level of the XLIFF file")]
@@ -39,6 +57,31 @@ public class QualityIntelligenceActions : UnbabelInvocable
         return await QiClient.ExecuteWithErrorHandling<EvaluationResponse>(request, Creds);
     }
 
+    [Action("Explain segment",
+        Description = "Get automatic evaluation of a translation accompanied by an explanation of the segment")]
+    public async Task<ExplanationResponse> ExplainSegment(
+        [ActionParameter] SegmentExplanationInput input)
+    {
+        var request = new RestRequest($"/v1/customers/{CustomerId}/explanations", Method.Post)
+            .WithJsonBody(new ExplainTranslationRequest(input, [
+                new()
+                {
+                    SourceSegment = input.SourceSegment,
+                    TargetSegment = input.TargetSegment,
+                    TargetPartialAnnotations =
+                    [
+                        new()
+                        {
+                            Start = input.Start,
+                            End = input.End
+                        }
+                    ]
+                }
+            ]), JsonConfig.Settings);
+
+        return await QiClient.ExecuteWithErrorHandling<ExplanationResponse>(request, Creds);
+    }
+
     [Action("Explain XLIFF",
         Description = "Get automatic evaluation of a translation accompanied by an explanation of the XLIFF file")]
     public async Task<ExplanationResponse> ExplainXliff(
@@ -48,7 +91,11 @@ public class QualityIntelligenceActions : UnbabelInvocable
         var segments = fileStream.GetSegments();
 
         var request = new RestRequest($"/v1/customers/{CustomerId}/explanations", Method.Post)
-            .WithJsonBody(new ExplainTranslationRequest(input, segments), JsonConfig.Settings);
+            .WithJsonBody(new ExplainTranslationRequest(input, segments.Select(x => new ExplanationTranslatedSegment()
+            {
+                SourceSegment = x.SourceSegment,
+                TargetSegment = x.TargetSegment
+            })), JsonConfig.Settings);
 
         return await QiClient.ExecuteWithErrorHandling<ExplanationResponse>(request, Creds);
     }

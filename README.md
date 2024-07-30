@@ -42,6 +42,13 @@ Unbabel is a language translation platform that combines artificial intelligence
 - **Submit project** submits a project to be actioned, so that it can't be updated or canceled afterwards.
 - **List/Get/Create project(s)**
 
+### Quality intelligence
+
+- **Evaluate XLIFF** returns a report with quality evaluations at the word, sentence, and document level of the XLIFF file.
+- **Evaluate segment** returns a report with quality evaluations at the word, sentence, and document level of the segment.
+- **Explain XLIFF** returns automatic evaluation of a translation accompanied by an explanation of the XLIFF file.
+- **Explain segment** returns automatic evaluation of a translation accompanied by an explanation of the segment.
+
 ## Feedback
 
 Do you want to use this app or do you have feedback on our implementation? Reach out to us using the [established channels](https://www.blackbird.io/) or create an issue.

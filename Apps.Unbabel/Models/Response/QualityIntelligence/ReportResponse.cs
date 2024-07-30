@@ -12,7 +12,7 @@ public class ReportResponse
 
     [Display("Quality CUA bucket")] public string QualityCuaBucket { get; set; }
 
-    [Display("Severity weight")] public int SeverityWeight { get; set; }
+    [Display("Severity weight")] public double SeverityWeight { get; set; }
 
     [Display("Error count")] public int ErrorCount { get; set; }
 

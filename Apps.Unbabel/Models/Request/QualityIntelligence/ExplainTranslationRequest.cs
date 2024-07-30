@@ -10,9 +10,9 @@ public class ExplainTranslationRequest
 
     public string? TargetLanguage { get; set; }
 
-    public IEnumerable<TranslatedSegment> TranslatedSegments { get; set; }
+    public IEnumerable<ExplanationTranslatedSegment> TranslatedSegments { get; set; }
 
-    public ExplainTranslationRequest(ExplanationInput input, IEnumerable<TranslatedSegment> segments)
+    public ExplainTranslationRequest(ExplanationInput input, IEnumerable<ExplanationTranslatedSegment> segments)
     {
         Uid = input.Uid;
         Register = input.Register;

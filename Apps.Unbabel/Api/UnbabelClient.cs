@@ -57,16 +57,8 @@ public class UnbabelClient : BlackBirdRestClient
 
         var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(response.Content, JsonSettings)!;
 
-        if (errorResponse.Message is not null)
-            return new(errorResponse.Message);
-
-        if (errorResponse.ErrorDescription is not null)
-            return new(errorResponse.ErrorDescription);
-
-        if (errorResponse.Detail is not null)
-            return new(errorResponse.Detail);
-
-        return new("Something went wrong");
+        return new(errorResponse.Message ??
+                   errorResponse.ErrorDescription ?? errorResponse.Detail ?? "Something went wrong");
     }
 
     public async Task<List<T>> Paginate<T>(RestRequest request, AuthenticationCredentialsProvider[] creds,

@@ -12,5 +12,5 @@ public class AnnotationResponse
 
     [Display("Severity level")] public string Severity { get; set; }
 
-    [Display("Weight")] public int Weight { get; set; }
+    [Display("Weight")] public double Weight { get; set; }
 }
