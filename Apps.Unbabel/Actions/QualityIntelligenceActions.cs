@@ -68,14 +68,16 @@ public class QualityIntelligenceActions : UnbabelInvocable
                 {
                     SourceSegment = input.SourceSegment,
                     TargetSegment = input.TargetSegment,
-                    TargetPartialAnnotations =
-                    [
-                        new()
-                        {
-                            Start = input.Start,
-                            End = input.End
-                        }
-                    ]
+                    TargetPartialAnnotations = input is { Start: not null, End: not null }
+                        ?
+                        [
+                            new()
+                            {
+                                Start = input.Start,
+                                End = input.End
+                            }
+                        ]
+                        : null
                 }
             ]), JsonConfig.Settings);
 

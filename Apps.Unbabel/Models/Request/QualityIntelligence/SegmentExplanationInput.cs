@@ -11,8 +11,8 @@ public class SegmentExplanationInput : ExplanationInput
     public string TargetSegment { get; set; }
     
     [Display("Error start position")]
-    public int Start { get; set; }
+    public int? Start { get; set; }
     
     [Display("Error end position")]
-    public int End { get; set; }
+    public int? End { get; set; }
 }
