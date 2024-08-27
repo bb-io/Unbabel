@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
@@ -6,13 +6,13 @@
         <Nullable>enable</Nullable>
         <Product>Unbabel</Product>
         <Description>LangOps platform</Description>
-        <Version>1.0.0</Version>
+        <Version>1.0.1</Version>
         <AssemblyName>Apps.Unbabel</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Blackbird.Applications.Sdk.Common" Version="2.8.0"/>
-        <PackageReference Include="Blackbird.Applications.Sdk.Utils" Version="1.0.19"/>
+        <PackageReference Include="Blackbird.Applications.Sdk.Common" Version="2.8.0" />
+        <PackageReference Include="Blackbird.Applications.Sdk.Utils" Version="1.0.19" />
         <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
         <PackageReference Include="MimeTypes" Version="2.4.1">
             <PrivateAssets>all</PrivateAssets>
@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource CopyToOutputDirectory="Always" Include="image\icon.png"/>
+        <EmbeddedResource CopyToOutputDirectory="Always" Include="image\icon.png" />
     </ItemGroup>
 
 </Project>
