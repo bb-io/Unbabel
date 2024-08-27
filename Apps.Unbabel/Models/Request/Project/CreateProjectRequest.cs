@@ -14,4 +14,7 @@ public class CreateProjectRequest
     
     [Display("Email of request creator")]
     public string RequestedBy { get; set; }
+
+    [Display("Callback", Description = "Use as URL endpoint for completed translations to be delivered to")]
+    public string? Callback { get; set; }
 }
