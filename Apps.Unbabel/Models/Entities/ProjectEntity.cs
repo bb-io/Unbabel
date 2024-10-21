@@ -1,5 +1,5 @@
 using Blackbird.Applications.Sdk.Common;
-
+using Newtonsoft.Json;
 namespace Apps.Unbabel.Models.Entities;
 
 public class ProjectEntity
@@ -27,4 +27,8 @@ public class ProjectEntity
 
     [Display("Requested by")]
     public string RequestedBy { get; set; }
+
+    [Display("Download URL")]
+    [JsonProperty("download_url")]
+    public string DownloadUrl { get; set; }
 }

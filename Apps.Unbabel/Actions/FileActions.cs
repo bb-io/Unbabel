@@ -55,7 +55,7 @@ public class FileActions : UnbabelInvocable
         return response;
     }
 
-    [Action("Download file", Description = "Download content of a specific project file")]
+    [Action("Download delivered file", Description = "Download content of a specific project file")]
     public async Task<FileResponse> DownloadFile([ActionParameter] FileRequest fileRequest)
     {
         var file = await GetFile(fileRequest);
@@ -71,6 +71,29 @@ public class FileActions : UnbabelInvocable
 
         using var stream = new MemoryStream(fileContent);
         var fileResult = await _fileManagementClient.UploadAsync(stream, MimeTypes.GetMimeType(file.Name), file.Name);
+
+        return new(fileResult);
+    }
+
+
+    [Action("Download delivered project files", Description = "Download all delivered project file")]
+    public async Task<FileResponse> DownloadProjectFiles([ActionParameter] ProjectRequest input)
+    {
+        var projectRequest = new RestRequest($"/v0/customers/{CustomerId}/projects/{input.ProjectId}");
+        var project = await ProjectsClient.ExecuteWithErrorHandling<ProjectEntity>(projectRequest, Creds);
+
+        if (project?.DownloadUrl is null || project?.Status != "delivered")
+            throw new("The project is not delivered yet.");
+
+        var downloadResponse = await DownloadFileContent(project.DownloadUrl);
+
+        var contentTypeHeader =
+            downloadResponse.ContentHeaders!.First(x => x.Name == "Content-Type").Value!.ToString()!;
+        var fileContent = await downloadResponse.RawBytes!.ReadFromMultipartFormData(contentTypeHeader);
+
+        using var stream = new MemoryStream(fileContent);
+        var name = $"{project.Name}.zip";
+        var fileResult = await _fileManagementClient.UploadAsync(stream, MimeTypes.GetMimeType(name), name);
 
         return new(fileResult);
     }

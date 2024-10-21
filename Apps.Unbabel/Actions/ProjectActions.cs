@@ -52,6 +52,9 @@ public class ProjectActions : UnbabelInvocable
         var request = new RestRequest($"/v0/customers/{CustomerId}/projects", Method.Post)
             .WithJsonBody(input, JsonConfig.Settings);
 
+        if (!string.IsNullOrEmpty(input.Callback))
+            request.AddHeader("Link", input.Callback);
+
         return ProjectsClient.ExecuteWithErrorHandling<ProjectEntity>(request, Creds);
     }
 
