@@ -61,7 +61,6 @@ public class TranslationActions : UnbabelInvocable
             };
         }   
     }
-        
 
     //[Action("Search translations", Description = "Searches for previously created translations")]
     //public async Task<SearchTranslationsResponse> SearchTranslations([ActionParameter] SearchTranslationsRequest input)

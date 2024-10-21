@@ -1,6 +1,5 @@
 using Blackbird.Applications.Sdk.Common;
 using Newtonsoft.Json;
-
 namespace Apps.Unbabel.Models.Entities;
 
 public class ProjectEntity
