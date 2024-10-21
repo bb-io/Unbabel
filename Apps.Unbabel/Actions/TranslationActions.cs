@@ -9,6 +9,7 @@ using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
 using Blackbird.Applications.Sdk.Utils.Extensions.Http;
 using RestSharp;
+using System.IO;
 
 namespace Apps.Unbabel.Actions;
 
@@ -35,8 +36,32 @@ public class TranslationActions : UnbabelInvocable
         => SubmitTranslation(new(input));
 
     [Action("Translate file", Description = "Translates a file using a specified pipeline, only txt, html and xliff supported.")]
-    public Task<TranslationEntity> SubmitFileTranslation([ActionParameter] SubmitFileTranslationInput input)
-        => SubmitTranslation(new(input, _fileManagementClient));
+    public async Task<FileTranslationEntity> SubmitFileTranslation([ActionParameter] SubmitFileTranslationInput input)
+    {
+        var translation = await SubmitTranslation(new(input, _fileManagementClient));
+
+        using (var stream = new MemoryStream())
+        {
+            var writer = new StreamWriter(stream);
+            writer.Write(translation.TargetText);
+            writer.Flush();
+            stream.Position = 0;
+
+            var uploadedFile = await _fileManagementClient.UploadAsync(stream, input.File.ContentType, input.File.Name);
+
+            return new FileTranslationEntity
+            {
+                TargetLanguage = translation.TargetLanguage,
+                SourceLanguage = translation.SourceLanguage,
+                TextFormat = translation.TextFormat,
+                Status = translation.Status,
+                PipelineId = translation.PipelineId,
+                TranslationUid = translation.TranslationUid,
+                TranslatedFile = uploadedFile,
+            };
+        }   
+    }
+        
 
     //[Action("Search translations", Description = "Searches for previously created translations")]
     //public async Task<SearchTranslationsResponse> SearchTranslations([ActionParameter] SearchTranslationsRequest input)
