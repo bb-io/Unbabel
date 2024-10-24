@@ -10,8 +10,8 @@ public class UploadFileRequest
     
     public UploadFileRequest(UploadFileInput input, FileContentRequest file)
     {
-        Name = file.FileName ?? file.File.Name;
-        Description = input.Description;
-        Extension = Path.GetExtension(file.FileName ?? file.File.Name).Replace(".", string.Empty);
+        Name = file.File.Name;
+        Description = input.Description ?? "No description";
+        Extension = Path.GetExtension(file.File.Name).Replace(".", string.Empty);
     }
 }

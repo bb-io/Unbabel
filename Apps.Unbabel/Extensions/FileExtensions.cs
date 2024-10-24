@@ -6,12 +6,18 @@ namespace Apps.Unbabel.Extensions;
 
 public static class FileExtensions
 {
-    public static async Task<byte[]> ReadFromMultipartFormData(this byte[] file, string contentType)
+    public static async Task<byte[]> ReadFromPossibleMultipartFormData(this byte[] file, string contentType)
     {
-        var stream = new MemoryStream(file);
-        var provider = await ReadFormDataAsync(stream, contentType);
-
-        return await provider.Contents.First().ReadAsByteArrayAsync();
+        using var stream = new MemoryStream(file);
+        try
+        {
+            var provider = await ReadFormDataAsync(stream, contentType);
+            return await provider.Contents.First().ReadAsByteArrayAsync();
+        } catch (Exception)
+        {
+            var content = new StreamContent(stream);
+            return await content.ReadAsByteArrayAsync();
+        }
     }
 
     static Task<MultipartMemoryStreamProvider> ReadFormDataAsync(Stream stream, string contentType)

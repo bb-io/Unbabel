@@ -22,32 +22,33 @@ Unbabel is a language translation platform that combines artificial intelligence
 
 ### Translations
 
-- **Translate text** submits simple string for translation and returns the results when they are ready.
-- **Translate file** submits specified file for translation and returns the results when they are ready. Service supports only txt, html and xliff file formats.
-
-### Files
-
-- **Upload/Download file**
-- **List/Get/Delete file(s)**
-
-### Orders
-
-- **List orders** returns the list of all project orders.
-- **Search orders** returns the list of project orders filtered by provided inputs.
+- **(T) Translate text** submits a simple string for translation and returns the results when they are ready.
+- **(T) Translate file** submits a file for translation and returns the translated file when they are ready. Service supports only txt, html and xliff file formats.
 
 ### Projects
 
-- **Search projects** returns the list of projects filtered by provided inputs.
-- **Cancel project** cancels a pre-submitted project that have not been submitted.
-- **Submit project** submits a project to be actioned, so that it can't be updated or canceled afterwards.
-- **List/Get/Create project(s)**
+- **(P) Search projects** returns the list of projects filtered by provided inputs.
+- **(P) Cancel project** cancels a pre-submitted project that have not been submitted.
+- **(P) Submit project** submits a project to be translated. It can't be updated or canceled afterwards.
+- **(P) Create project** creates a new project. You can specify your desired pipelines here.
+- **(P) Get project** get information and the current status of a project.
+- **(P) Search project completed files** returns a list of all completed files. Every item will have an input file ID and an output file ID. Use the output file ID with "Downlaod file" to download the translated file.
+
+### Files
+
+- **(P) Upload file** upload a new file to a created profile before submitting.
+- **(P) Download file** download the file ID. use in conjunction with "Search project completed files" to download completed files.
 
 ### Quality intelligence
 
-- **Evaluate XLIFF** returns a report with quality evaluations at the word, sentence, and document level of the XLIFF file.
-- **Evaluate segment** returns a report with quality evaluations at the word, sentence, and document level of the segment.
-- **Explain XLIFF** returns automatic evaluation of a translation accompanied by an explanation of the XLIFF file.
-- **Explain segment** returns automatic evaluation of a translation accompanied by an explanation of the segment.
+- **(QI) Evaluate XLIFF** returns a report with quality evaluations at the word, sentence, and document level of the XLIFF file.
+- **(QI) Evaluate segment** returns a report with quality evaluations at the word, sentence, and document level of the segment.
+- **(QI) Explain XLIFF** returns automatic evaluation of a translation accompanied by an explanation of the XLIFF file.
+- **(QI) Explain segment** returns automatic evaluation of a translation accompanied by an explanation of the segment.
+
+## Events
+
+- **(P) On project status changed** is triggered whenever the status of a project changes. You can additionally add the status you want to look out for to f.e. only continue a checkpoint when the project is delivered.
 
 ## Feedback
 

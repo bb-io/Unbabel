@@ -4,7 +4,7 @@ namespace Apps.Unbabel.Models.Entities;
 
 public class OrderEntity
 {
-    [Display("ID")]
+    [Display("Order ID")]
     public string Id { get; set; }
 
     [Display("Name")]

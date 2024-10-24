@@ -12,6 +12,11 @@ using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
 using Blackbird.Applications.Sdk.Utils.Extensions.Files;
 using Blackbird.Applications.Sdk.Utils.Extensions.Http;
 using RestSharp;
+using Blackbird.Applications.Sdk.Common.Files;
+using System.Net.Mime;
+using System;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace Apps.Unbabel.Actions;
 
@@ -24,16 +29,7 @@ public class FileActions : UnbabelInvocable
         _fileManagementClient = fileManagementClient;
     }
 
-    [Action("List files", Description = "List all project files")]
-    public async Task<ListFilesResponse> ListFiles([ActionParameter] ProjectRequest input)
-    {
-        var request = new RestRequest($"/v0/customers/{CustomerId}/projects/{input.ProjectId}/files");
-        var items = await ProjectsClient.Paginate<FileEntity>(request, Creds);
-
-        return new(items);
-    }
-
-    [Action("Upload file", Description = "Upload a new file to the project")]
+    [Action("(P) Upload file", Description = "Upload a new file to the project")]
     public async Task<FileEntity> UploadFile(
         [ActionParameter] ProjectRequest project,
         [ActionParameter] UploadFileInput input,
@@ -46,7 +42,7 @@ public class FileActions : UnbabelInvocable
 
         var fileBytes = _fileManagementClient.DownloadAsync(file.File).Result.GetByteData().Result;
         var uploadRequest = new RestRequest(response.UploadUrl, Method.Put)
-            .AddFile("file", fileBytes, file.FileName ?? file.File.Name);
+            .AddFile("file", fileBytes, file.File.Name);
         var uploadResponse = await new RestClient().ExecuteAsync(uploadRequest);
 
         if (!uploadResponse.IsSuccessStatusCode)
@@ -55,65 +51,24 @@ public class FileActions : UnbabelInvocable
         return response;
     }
 
-    [Action("Download delivered file", Description = "Download content of a specific project file")]
-    public async Task<FileResponse> DownloadFile([ActionParameter] FileRequest fileRequest)
+    [Action("(P) Download file", Description = "Download content of a source or delivered file in a project")]
+    public async Task<FileResponse> DownloadFile([ActionParameter] FileRequest input)
     {
-        var file = await GetFile(fileRequest);
+        var endpoint = $"/v0/customers/{CustomerId}/projects/{input.ProjectId}/files/{input.FileId}";
+        var request = new RestRequest(endpoint);
 
-        if (file.DownloadUrl is null)
-            throw new("File does not have content yet");
+        var file = await ProjectsClient.ExecuteWithErrorHandling<FileEntity>(request, Creds);
 
         var downloadResponse = await DownloadFileContent(file.DownloadUrl);
 
-        var contentTypeHeader =
-            downloadResponse.ContentHeaders!.First(x => x.Name == "Content-Type").Value!.ToString()!;
-        var fileContent = await downloadResponse.RawBytes!.ReadFromMultipartFormData(contentTypeHeader);
-
-        using var stream = new MemoryStream(fileContent);
+        // Soo apparently Unbabel will return an additional boundary as if it were multipart/form-data if the content is plaintext.
+        // E.g. --ec294934-734a-4a85-8723-d429ec8742fd content-type : application/octet-stream content-disposition : form-data ; nom = « file » ; nom du fichier = « hubspot .html »[...rest of the file here]
+        // However the Content Type is still octet-stream and not multipart/form-data.
+        // Many things have been tried. Nothing has worked to stabily resolve it.
+        using var stream = new MemoryStream(downloadResponse.RawBytes);
         var fileResult = await _fileManagementClient.UploadAsync(stream, MimeTypes.GetMimeType(file.Name), file.Name);
 
         return new(fileResult);
-    }
-
-
-    [Action("Download delivered project files", Description = "Download all delivered project file")]
-    public async Task<FileResponse> DownloadProjectFiles([ActionParameter] ProjectRequest input)
-    {
-        var projectRequest = new RestRequest($"/v0/customers/{CustomerId}/projects/{input.ProjectId}");
-        var project = await ProjectsClient.ExecuteWithErrorHandling<ProjectEntity>(projectRequest, Creds);
-
-        if (project?.DownloadUrl is null || project?.Status != "delivered")
-            throw new("The project is not delivered yet.");
-
-        var downloadResponse = await DownloadFileContent(project.DownloadUrl);
-
-        var contentTypeHeader =
-            downloadResponse.ContentHeaders!.First(x => x.Name == "Content-Type").Value!.ToString()!;
-        var fileContent = await downloadResponse.RawBytes!.ReadFromMultipartFormData(contentTypeHeader);
-
-        using var stream = new MemoryStream(fileContent);
-        var name = $"{project.Name}.zip";
-        var fileResult = await _fileManagementClient.UploadAsync(stream, MimeTypes.GetMimeType(name), name);
-
-        return new(fileResult);
-    }
-
-    [Action("Get file", Description = "Get details of a specific file")]
-    public Task<FileEntity> GetFile([ActionParameter] FileRequest file)
-    {
-        var endpoint = $"/v0/customers/{CustomerId}/projects/{file.ProjectId}/files/{file.FileId}";
-        var request = new RestRequest(endpoint);
-
-        return ProjectsClient.ExecuteWithErrorHandling<FileEntity>(request, Creds);
-    }
-
-    [Action("Delete file", Description = "Delete specific file from the project")]
-    public Task DeleteFile([ActionParameter] FileRequest file)
-    {
-        var endpoint = $"/v0/customers/{CustomerId}/projects/{file.ProjectId}/files/{file.FileId}";
-        var request = new RestRequest(endpoint, Method.Delete);
-
-        return ProjectsClient.ExecuteWithErrorHandling(request, Creds);
     }
 
     private async Task<RestResponse> DownloadFileContent(string fileDownloadUrl)

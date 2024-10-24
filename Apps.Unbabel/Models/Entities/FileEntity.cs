@@ -5,7 +5,7 @@ namespace Apps.Unbabel.Models.Entities;
 
 public class FileEntity
 {
-    [Display("ID")]
+    [Display("File ID")]
     public string Id { get; set; }
 
     [Display("Project ID")]
