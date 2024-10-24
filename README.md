@@ -50,6 +50,12 @@ Unbabel is a language translation platform that combines artificial intelligence
 
 - **(P) On project status changed** is triggered whenever the status of a project changes. You can additionally add the status you want to look out for to f.e. only continue a checkpoint when the project is delivered.
 
+## Example
+
+![1729784592233](image/README/1729784592233.png)
+
+The above example demonstrates how Unbabel projects can be used in conjunction with checkpoints.
+
 ## Feedback
 
 Do you want to use this app or do you have feedback on our implementation? Reach out to us using the [established channels](https://www.blackbird.io/) or create an issue.
