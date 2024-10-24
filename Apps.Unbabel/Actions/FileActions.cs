@@ -15,6 +15,8 @@ using RestSharp;
 using Blackbird.Applications.Sdk.Common.Files;
 using System.Net.Mime;
 using System;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace Apps.Unbabel.Actions;
 
@@ -57,15 +59,20 @@ public class FileActions : UnbabelInvocable
 
         var file = await ProjectsClient.ExecuteWithErrorHandling<FileEntity>(request, Creds);
 
-        if (file.DownloadUrl is null)
-            throw new("File does not have content yet");
-
         var downloadResponse = await DownloadFileContent(file.DownloadUrl);
 
-        var contentTypeHeader = downloadResponse.ContentType; //downloadResponse.ContentHeaders!.First(x => x.Name == "Content-Type").Value!.ToString()!;
-        var fileContent = await downloadResponse.RawBytes!.ReadFromPossibleMultipartFormData(contentTypeHeader);
+        var bytes = downloadResponse.RawBytes;
 
-        using var stream = new MemoryStream(fileContent);
+        // Yes apparently this is necessary since Unbabel will return an additional boundary as if it were multipart/form-data if the content is plaintext.
+        if (downloadResponse.Content.StartsWith("--") &&
+            downloadResponse.Content.EndsWith("--") &&
+            downloadResponse.Content.Contains("application/octet-stream content-disposition"))
+        {
+            var cleanedContent = downloadResponse.Content.Remove(downloadResponse.Content.Length - 40).Split('»')[2];
+            bytes = Encoding.UTF8.GetBytes(cleanedContent);
+        }
+
+        using var stream = new MemoryStream(bytes);
         var fileResult = await _fileManagementClient.UploadAsync(stream, MimeTypes.GetMimeType(file.Name), file.Name);
 
         return new(fileResult);
