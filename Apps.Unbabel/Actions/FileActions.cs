@@ -60,8 +60,25 @@ public class FileActions : UnbabelInvocable
         if (file.DownloadUrl is null)
             throw new("File does not have content yet");
 
-        var reference = new FileReference(new HttpRequestMessage(HttpMethod.Get, new Uri(file.DownloadUrl)), file.Name, MimeTypes.GetMimeType(file.Name));
+        var downloadResponse = await DownloadFileContent(file.DownloadUrl);
 
-        return new(reference);
+        var contentTypeHeader =
+            downloadResponse.ContentHeaders!.First(x => x.Name == "Content-Type").Value!.ToString()!;
+        var fileContent = await downloadResponse.RawBytes!.ReadFromMultipartFormData(contentTypeHeader);
+
+        using var stream = new MemoryStream(fileContent);
+        var fileResult = await _fileManagementClient.UploadAsync(stream, MimeTypes.GetMimeType(file.Name), file.Name);
+
+        return new(fileResult);
+    }
+
+    private async Task<RestResponse> DownloadFileContent(string fileDownloadUrl)
+    {
+        var response = await new RestClient().ExecuteAsync(new(fileDownloadUrl));
+
+        if (!response.IsSuccessStatusCode)
+            throw new($"Failed to download file from {fileDownloadUrl}; Response: {response.Content}");
+
+        return response;
     }
 }
