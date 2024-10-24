@@ -61,18 +61,11 @@ public class FileActions : UnbabelInvocable
 
         var downloadResponse = await DownloadFileContent(file.DownloadUrl);
 
-        var bytes = downloadResponse.RawBytes;
-
-        // Yes apparently this is necessary since Unbabel will return an additional boundary as if it were multipart/form-data if the content is plaintext.
-        if (downloadResponse.Content.StartsWith("--") &&
-            downloadResponse.Content.EndsWith("--") &&
-            downloadResponse.Content.Contains("application/octet-stream content-disposition"))
-        {
-            var cleanedContent = downloadResponse.Content.Remove(downloadResponse.Content.Length - 40).Split('»')[2];
-            bytes = Encoding.UTF8.GetBytes(cleanedContent);
-        }
-
-        using var stream = new MemoryStream(bytes);
+        // Soo apparently Unbabel will return an additional boundary as if it were multipart/form-data if the content is plaintext.
+        // E.g. --ec294934-734a-4a85-8723-d429ec8742fd content-type : application/octet-stream content-disposition : form-data ; nom = « file » ; nom du fichier = « hubspot .html »[...rest of the file here]
+        // However the Content Type is still octet-stream and not multipart/form-data.
+        // Many things have been tried. Nothing has worked to stabily resolve it.
+        using var stream = new MemoryStream(downloadResponse.RawBytes);
         var fileResult = await _fileManagementClient.UploadAsync(stream, MimeTypes.GetMimeType(file.Name), file.Name);
 
         return new(fileResult);
