@@ -62,9 +62,8 @@ public class FileActions : UnbabelInvocable
 
         var downloadResponse = await DownloadFileContent(file.DownloadUrl);
 
-        var contentTypeHeader =
-            downloadResponse.ContentHeaders!.First(x => x.Name == "Content-Type").Value!.ToString()!;
-        var fileContent = await downloadResponse.RawBytes!.ReadFromMultipartFormData(contentTypeHeader);
+        var contentTypeHeader = downloadResponse.ContentType; //downloadResponse.ContentHeaders!.First(x => x.Name == "Content-Type").Value!.ToString()!;
+        var fileContent = await downloadResponse.RawBytes!.ReadFromPossibleMultipartFormData(contentTypeHeader);
 
         using var stream = new MemoryStream(fileContent);
         var fileResult = await _fileManagementClient.UploadAsync(stream, MimeTypes.GetMimeType(file.Name), file.Name);
