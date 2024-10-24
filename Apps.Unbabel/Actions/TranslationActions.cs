@@ -22,20 +22,11 @@ public class TranslationActions : UnbabelInvocable
         _fileManagementClient = fileManagementClient;
     }
 
-    //[Action("Get translation", Description = "Get details of a specific translation")]
-    private Task<TranslationEntity> GetTranslation([ActionParameter] TranslationRequest input)
-    {
-        var endpoint = $"/v1/customers/{CustomerId}/translations/{input.TranslationId}";
-        var request = new RestRequest(endpoint);
-
-        return TranslationsClient.ExecuteWithErrorHandling<TranslationEntity>(request, Creds);
-    }
-
-    [Action("Translate text", Description = "Translates text using a specified pipeline")]
+    [Action("(T) Translate text", Description = "Translates text using a specified pipeline")]
     public Task<TranslationEntity> SubmitTextTranslation([ActionParameter] SubmitTextTranslationInput input)
         => SubmitTranslation(new(input));
 
-    [Action("Translate file", Description = "Translates a file using a specified pipeline, only txt, html and xliff supported.")]
+    [Action("(T) Translate file", Description = "Translates a file using a specified pipeline, only txt, html and xliff supported.")]
     public async Task<FileTranslationEntity> SubmitFileTranslation([ActionParameter] SubmitFileTranslationInput input)
     {
         var translation = await SubmitTranslation(new(input, _fileManagementClient));
@@ -62,26 +53,6 @@ public class TranslationActions : UnbabelInvocable
         }   
     }
 
-    //[Action("Search translations", Description = "Searches for previously created translations")]
-    //public async Task<SearchTranslationsResponse> SearchTranslations([ActionParameter] SearchTranslationsRequest input)
-    //{
-    //    var endpoint = $"/v1/customers/{CustomerId}/translations:search";
-    //    var request = new RestRequest(endpoint, Method.Post);
-
-    //    var response = await TranslationClient.Paginate<TranslationEntity>(request, Creds,
-    //        JObject.FromObject(input, JsonSerializer.Create(JsonConfig.Settings)));
-    //    return new(response);
-    //}
-
-    //[Action("Cancel translation", Description = "Cancel an ongoing translation")]
-    //public Task CancelTranslation([ActionParameter] TranslationRequest input)
-    //{
-    //    var endpoint = $"/v1/customers/{CustomerId}/translations/{input.TranslationId}:cancel";
-    //    var request = new RestRequest(endpoint, Method.Post);
-
-    //    return TranslationClient.ExecuteWithErrorHandling(request, Creds);
-    //}
-
     private async Task<TranslationEntity> SubmitTranslation(SubmitTranslationRequest payload)
     {
         var endpoint = $"/v1/customers/{CustomerId}/translations:submit_async";
@@ -102,5 +73,13 @@ public class TranslationActions : UnbabelInvocable
         }
 
         return result!;
+    }
+
+    private Task<TranslationEntity> GetTranslation([ActionParameter] TranslationRequest input)
+    {
+        var endpoint = $"/v1/customers/{CustomerId}/translations/{input.TranslationId}";
+        var request = new RestRequest(endpoint);
+
+        return TranslationsClient.ExecuteWithErrorHandling<TranslationEntity>(request, Creds);
     }
 }

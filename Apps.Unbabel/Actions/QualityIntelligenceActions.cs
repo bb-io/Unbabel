@@ -24,7 +24,7 @@ public class QualityIntelligenceActions : UnbabelInvocable
         _fileManagementClient = fileManagementClient;
     }
 
-    [Action("Evaluate segment",
+    [Action("(QI) Evaluate segment",
         Description =
             "Get a report with quality evaluations at the word, sentence, and document level of the segment")]
     public async Task<EvaluationResponse> EvaluateSegment(
@@ -42,7 +42,7 @@ public class QualityIntelligenceActions : UnbabelInvocable
         return await QiClient.ExecuteWithErrorHandling<EvaluationResponse>(request, Creds);
     }
 
-    [Action("Evaluate XLIFF",
+    [Action("(QI) Evaluate XLIFF",
         Description =
             "Get a report with quality evaluations at the word, sentence, and document level of the XLIFF file")]
     public async Task<EvaluationResponse> EvaluateXliff(
@@ -57,7 +57,7 @@ public class QualityIntelligenceActions : UnbabelInvocable
         return await QiClient.ExecuteWithErrorHandling<EvaluationResponse>(request, Creds);
     }
 
-    [Action("Explain segment",
+    [Action("(QI) Explain segment",
         Description = "Get automatic evaluation of a translation accompanied by an explanation of the segment")]
     public async Task<ExplanationResponse> ExplainSegment(
         [ActionParameter] SegmentExplanationInput input)
@@ -84,7 +84,7 @@ public class QualityIntelligenceActions : UnbabelInvocable
         return await QiClient.ExecuteWithErrorHandling<ExplanationResponse>(request, Creds);
     }
 
-    [Action("Explain XLIFF",
+    [Action("(QI) Explain XLIFF",
         Description = "Get automatic evaluation of a translation accompanied by an explanation of the XLIFF file")]
     public async Task<ExplanationResponse> ExplainXliff(
         [ActionParameter] ExplanationInput input, [ActionParameter] FileModel file)

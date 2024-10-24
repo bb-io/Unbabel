@@ -4,7 +4,7 @@ namespace Apps.Unbabel.Models.Entities;
 
 public class ProjectEntity
 {
-    [Display("ID")]
+    [Display("Project ID")]
     public string Id { get; set; }
 
     [Display("Customer ID")]
