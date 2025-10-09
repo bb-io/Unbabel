@@ -15,7 +15,7 @@ using RestSharp;
 
 namespace Apps.Unbabel.Actions;
 
-[ActionList]
+[ActionList("Project")]
 public class ProjectActions : UnbabelInvocable
 {
     public ProjectActions(InvocationContext invocationContext) : base(invocationContext)
