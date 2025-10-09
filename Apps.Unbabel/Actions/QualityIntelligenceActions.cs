@@ -13,7 +13,7 @@ using RestSharp;
 
 namespace Apps.Unbabel.Actions;
 
-[ActionList]
+[ActionList("Quality intelligence")]
 public class QualityIntelligenceActions : UnbabelInvocable
 {
     private readonly IFileManagementClient _fileManagementClient;

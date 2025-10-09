@@ -13,7 +13,7 @@ using System.IO;
 
 namespace Apps.Unbabel.Actions;
 
-[ActionList]
+[ActionList("Translation")]
 public class TranslationActions : UnbabelInvocable
 {
     private readonly IFileManagementClient _fileManagementClient;

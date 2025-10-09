@@ -20,7 +20,7 @@ using System.Text;
 
 namespace Apps.Unbabel.Actions;
 
-[ActionList]
+[ActionList("File")]
 public class FileActions : UnbabelInvocable
 {
     private readonly IFileManagementClient _fileManagementClient;
