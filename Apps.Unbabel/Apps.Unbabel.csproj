@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <Product>Unbabel</Product>
         <Description>LangOps platform</Description>
-        <Version>1.1.1</Version>
+        <Version>1.1.2</Version>
         <AssemblyName>Apps.Unbabel</AssemblyName>
     </PropertyGroup>
 
@@ -24,4 +24,7 @@
         <EmbeddedResource CopyToOutputDirectory="Always" Include="image\icon.png" />
     </ItemGroup>
 
+    <ItemGroup>
+        <EmbeddedResource Include="..\README.md" Link="README.md" CopyToOutputDirectory="Always" />
+    </ItemGroup>
 </Project>
